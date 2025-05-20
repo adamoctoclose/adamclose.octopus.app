@@ -41,5 +41,16 @@ step "deploy-frontend-helm" {
             git_credential_type = "Library"
             repository_uri = "https://github.com/adamoctoclose/octo-payments-platform.git"
         }
+
+        packages "payments-frontend" {
+            acquisition_location = "NotAcquired"
+            feed = "docker-hub"
+            package_id = "adamoctoclose/payments-frontend"
+            properties = {
+                Extract = "False"
+                Purpose = "DockerImageReference"
+                SelectionMode = "immediate"
+            }
+        }
     }
 }
