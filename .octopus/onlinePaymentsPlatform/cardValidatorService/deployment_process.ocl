@@ -8,6 +8,7 @@ step "deploy-a-helm-chart" {
         action_type = "Octopus.HelmChartUpgrade"
         properties = {
             Octopus.Action.GitRepository.Source = "External"
+            Octopus.Action.Helm.AdditionalArgs = "--create-namespace"
             Octopus.Action.Helm.ChartDirectory = "frontend/octo-payments-frontend"
             Octopus.Action.Helm.Namespace = "octopayments-validator-#{Octopus.Environment.Name | ToLower}"
             Octopus.Action.Helm.ReleaseName = "octo-payments-validator"
@@ -22,6 +23,7 @@ step "deploy-a-helm-chart" {
                 ]
                 EOT
             Octopus.Action.Kubernetes.ResourceStatusCheck = "True"
+            Octopus.Action.RunOnServer = "false"
             Octopus.Action.Script.ScriptSource = "GitRepository"
         }
         worker_pool_variable = ""
