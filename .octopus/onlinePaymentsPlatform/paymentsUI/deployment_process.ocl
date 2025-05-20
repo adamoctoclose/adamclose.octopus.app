@@ -1,3 +1,19 @@
+step "hashicorp-vault-key-value-retrieve-secrets" {
+    name = "HashiCorp Vault - Key Value Retrieve Secrets"
+
+    action {
+        properties = {
+            Octopus.Action.Template.Id = "ActionTemplates-762"
+            Octopus.Action.Template.Version = "1"
+            Vault.Retrieve.KV.V2.Secrets.ApiVersion = "v1"
+            Vault.Retrieve.KV.V2.Secrets.PrintVariableNames = "False"
+            Vault.Retrieve.KV.V2.Secrets.RecursiveSearch = "False"
+            Vault.Retrieve.KV.V2.Secrets.RetrievalMethod = "Get"
+        }
+        worker_pool = "hosted-ubuntu"
+    }
+}
+
 step "deploy-frontend-helm" {
     name = "Deploy Frontend Helm"
     properties = {
