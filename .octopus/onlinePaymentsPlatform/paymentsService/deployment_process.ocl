@@ -13,3 +13,48 @@ step "hashicorp-vault-key-value-retrieve-secrets" {
         worker_pool = "hosted-ubuntu"
     }
 }
+
+step "deploy-a-helm-chart" {
+    name = "Deploy a Helm Chart"
+    properties = {
+        Octopus.Action.TargetRoles = "kubernetes-retail-banking"
+    }
+
+    action {
+        action_type = "Octopus.HelmChartUpgrade"
+        properties = {
+            Octopus.Action.GitRepository.Source = "External"
+            Octopus.Action.Helm.AdditionalArgs = "--create-namespace"
+            Octopus.Action.Helm.ChartDirectory = "frontend/octo-payments-frontend"
+            Octopus.Action.Helm.Namespace = "octopayments-api-#{Octopus.Environment.Name | ToLower}"
+            Octopus.Action.Helm.ReleaseName = "payments-api-#{Octopus.Environment.Name | ToLower}"
+            Octopus.Action.Helm.ResetValues = "True"
+            Octopus.Action.Helm.TemplateValuesSources = <<-EOT
+                [
+                  {
+                    "Type": "GitRepository",
+                    "GitDependencyName": "TemplateValues-1",
+                    "ValuesFilePaths": "frontend/octo-payments-frontend/values.yaml"
+                  }
+                ]
+                EOT
+            Octopus.Action.Kubernetes.ResourceStatusCheck = "True"
+            Octopus.Action.Script.ScriptSource = "GitRepository"
+        }
+        worker_pool_variable = ""
+
+        git_dependencies {
+            default_branch = "main"
+            git_credential_id = "GitCredentials-121"
+            git_credential_type = "Library"
+            repository_uri = "https://github.com/adamoctoclose/octo-payments-platform.git"
+        }
+
+        git_dependencies "TemplateValues-1" {
+            default_branch = "main"
+            git_credential_id = "GitCredentials-121"
+            git_credential_type = "Library"
+            repository_uri = "https://github.com/adamoctoclose/octo-payments-platform.git"
+        }
+    }
+}
