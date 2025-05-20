@@ -11,6 +11,7 @@ step "deploy-frontend-helm" {
             Octopus.Action.Helm.AdditionalArgs = "--create-namespace"
             Octopus.Action.Helm.ChartDirectory = "frontend/octo-payments-frontend"
             Octopus.Action.Helm.Namespace = "octopayments-#{Octopus.Environment.Name | ToLower}"
+            Octopus.Action.Helm.ReleaseName = "payments-frontend-#{Octopus.Environment.Name | ToLower}"
             Octopus.Action.Helm.ResetValues = "True"
             Octopus.Action.Helm.TemplateValuesSources = <<-EOT
                 [
