@@ -70,3 +70,28 @@ step "deploy-frontend-helm" {
         }
     }
 }
+
+step "send-failed-deployment-notification" {
+    condition = "Failure"
+    name = "Send Failed Deployment Notification"
+
+    action {
+        properties = {
+            Octopus.Action.Template.Id = "ActionTemplates-781"
+            Octopus.Action.Template.Version = "0"
+        }
+        worker_pool = "hosted-ubuntu"
+    }
+}
+
+step "send-successful-deployment-notification" {
+    name = "Send Successful Deployment Notification"
+
+    action {
+        properties = {
+            Octopus.Action.Template.Id = "ActionTemplates-781"
+            Octopus.Action.Template.Version = "0"
+        }
+        worker_pool = "hosted-ubuntu"
+    }
+}
