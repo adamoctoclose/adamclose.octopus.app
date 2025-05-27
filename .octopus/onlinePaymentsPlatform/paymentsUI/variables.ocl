@@ -2,7 +2,7 @@ variable "Serilog:WriteTo:Args:path" {
 
     value "#{project.log.filename}" {
 
-        environment = ["development", "test", "release", "production"]
+        environment = ["development", "test", "staging", "production"]
 
     }
 
@@ -42,7 +42,7 @@ variable "xray:api.token" {
 
     value "#{project.xray.api.token}" {
 
-        environment = ["development", "test","release"]
+        environment = ["development", "test","staging"]
 
     }
 
