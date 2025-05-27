@@ -27,7 +27,7 @@ step "deploy-a-helm-chart" {
             Octopus.Action.Helm.AdditionalArgs = "--create-namespace"
             Octopus.Action.Helm.ChartDirectory = "frontend/octo-payments-frontend"
             Octopus.Action.Helm.Namespace = "octopayments-api-#{Octopus.Environment.Name | ToLower}"
-            Octopus.Action.Helm.ReleaseName = "payments-api-#{Octopus.Environment.Name | ToLower}"
+            Octopus.Action.Helm.ReleaseName = "payments-apii-#{Octopus.Environment.Name | ToLower}"
             Octopus.Action.Helm.ResetValues = "True"
             Octopus.Action.Helm.TemplateValuesSources = <<-EOT
                 [
@@ -39,6 +39,7 @@ step "deploy-a-helm-chart" {
                 ]
                 EOT
             Octopus.Action.Kubernetes.ResourceStatusCheck = "True"
+            Octopus.Action.RunOnServer = "false"
             Octopus.Action.Script.ScriptSource = "GitRepository"
         }
         worker_pool_variable = ""
