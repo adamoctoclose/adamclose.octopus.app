@@ -54,7 +54,7 @@ variable "xray:passthrough.token" {
 
     value "#{project.xray.passthrough.token}" {
 
-        environment = ["development", "test","release"]
+        environment = ["development", "test","staging"]
 
     }
 
