@@ -20,7 +20,7 @@ variable "project.log.filename" {
 
 variable "project.install.dir" {
 
-    value "D:\apps\STAPIs\STJfrogXray\#{Octopus.Environment.Name}" {}
+    value "D:\\apps\\STAPIs\\STJfrogXray\\#{Octopus.Environment.Name}" {}
 
 }
 
