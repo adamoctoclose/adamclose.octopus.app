@@ -1,4 +1,4 @@
-name = "Configure MySQL"
+name = "🛠️ Configure MySQL"
 default_guided_failure_mode = "EnvironmentDefault"
 description = <<-EOT
         Action: Installs and Configures MySQL
