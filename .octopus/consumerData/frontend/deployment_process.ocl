@@ -1,0 +1,30 @@
+step "deploy-java-archive" {
+    name = "Deploy Java Archive"
+    properties = {
+        Octopus.Action.TargetRoles = "customer-data-web"
+    }
+
+    action {
+        action_type = "Octopus.JavaArchive"
+        properties = {
+            Octopus.Action.EnabledFeatures = ",Octopus.Features.SubstituteInFiles"
+            Octopus.Action.JavaArchive.DeployExploded = "False"
+            Octopus.Action.Package.CustomInstallationDirectoryShouldBePurgedBeforeDeployment = "False"
+            Octopus.Action.Package.DownloadOnTentacle = "False"
+            Octopus.Action.Package.FeedId = "octopus-server-built-in"
+            Octopus.Action.Package.JavaArchiveCompression = "True"
+            Octopus.Action.Package.PackageId = "petclinic.web"
+            Octopus.Action.Package.UseCustomInstallationDirectory = "False"
+        }
+        worker_pool_variable = ""
+
+        packages {
+            acquisition_location = "Server"
+            feed = "octopus-server-built-in"
+            package_id = "petclinic.web"
+            properties = {
+                SelectionMode = "immediate"
+            }
+        }
+    }
+}
