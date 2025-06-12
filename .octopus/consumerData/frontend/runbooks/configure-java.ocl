@@ -14,4 +14,56 @@ run_retention_policy {
     quantity_to_keep = 100
 }
 
-process {}
+process {
+    step "install-java" {
+        name = "Install Java "
+        properties = {
+            Octopus.Action.TargetRoles = "customer-data-web"
+        }
+
+        action {
+            action_type = "Octopus.Script"
+            properties = {
+                Octopus.Action.RunOnServer = "false"
+                Octopus.Action.Script.ScriptBody = <<-EOT
+                    #!/bin/bash
+                    
+                    set -e
+                    
+                    # Choose Java version (OpenJDK 17 is safe for most modern apps; change to 11 or 8 if needed)
+                    JAVA_VERSION="17"
+                    JAVA_PACKAGE="openjdk-${JAVA_VERSION}-jdk"
+                    
+                    echo "Installing Java ${JAVA_VERSION}..."
+                    
+                    # Update and install Java
+                    sudo apt update
+                    sudo apt install -y "$JAVA_PACKAGE"
+                    
+                    # Get install path
+                    JAVA_HOME_PATH=$(update-java-alternatives -l | awk '{print $3}')
+                    
+                    # Add JAVA_HOME to profile if not already there
+                    if ! grep -q "JAVA_HOME" /etc/profile.d/java.sh 2>/dev/null; then
+                      echo "Setting JAVA_HOME and updating PATH..."
+                      sudo bash -c "cat > /etc/profile.d/java.sh" <<EOF
+                    export JAVA_HOME=${JAVA_HOME_PATH}
+                    export PATH=\$JAVA_HOME/bin:\$PATH
+                    EOF
+                    fi
+                    
+                    # Source the profile for the current shell
+                    source /etc/profile.d/java.sh
+                    
+                    echo "Java installation complete."
+                    java -version
+                    
+                    EOT
+                Octopus.Action.Script.ScriptSource = "Inline"
+                Octopus.Action.Script.Syntax = "Bash"
+                OctopusUseBundledTooling = "False"
+            }
+            worker_pool_variable = ""
+        }
+    }
+}
