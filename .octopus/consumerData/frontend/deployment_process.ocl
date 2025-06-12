@@ -15,6 +15,7 @@ step "deploy-java-archive" {
             Octopus.Action.Package.JavaArchiveCompression = "True"
             Octopus.Action.Package.PackageId = "petclinic.web"
             Octopus.Action.Package.UseCustomInstallationDirectory = "False"
+            Octopus.Action.RunOnServer = "false"
         }
         worker_pool_variable = ""
 
@@ -24,6 +25,41 @@ step "deploy-java-archive" {
             package_id = "petclinic.web"
             properties = {
                 SelectionMode = "immediate"
+            }
+        }
+    }
+}
+
+step "flyway-database-migrations" {
+    name = "Flyway Database Migrations"
+    properties = {
+        Octopus.Action.TargetRoles = "customer-data-web"
+    }
+
+    action {
+        properties = {
+            Flyway.Authentication.Method = "usernamepassword"
+            Flyway.Command.BaseLineOnMigrate = "false"
+            Flyway.Command.FailOnDrift = "true"
+            Flyway.Command.OutOfOrder = "false"
+            Flyway.Command.SkipExecutingMigrations = "false"
+            Flyway.Command.Target = "latest"
+            Flyway.Command.Value = "migrate"
+            Flyway.Package.Value = "{\"PackageId\":\"petclinic.web\",\"FeedId\":\"octopus-server-built-in\"}"
+            Octopus.Action.RunOnServer = "false"
+            Octopus.Action.Template.Id = "ActionTemplates-841"
+            Octopus.Action.Template.Version = "15"
+        }
+        worker_pool_variable = ""
+
+        packages "Flyway.Package.Value" {
+            acquisition_location = "Server"
+            feed = "octopus-server-built-in"
+            package_id = "petclinic.web"
+            properties = {
+                Extract = "True"
+                PackageParameterName = "Flyway.Package.Value"
+                SelectionMode = "deferred"
             }
         }
     }
