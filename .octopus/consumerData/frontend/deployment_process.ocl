@@ -11,6 +11,8 @@ step "mysql-create-database-if-not-exists" {
             createPort = "3306"
             createUsername = "#{MySQL.Username}"
             createUserPassword = "#{MySQL.Password}"
+            createUseSSL = "True"
+            mySqlAuthenticationMethod = "usernamepassword"
             Octopus.Action.RunOnServer = "false"
             Octopus.Action.Template.Id = "ActionTemplates-842"
             Octopus.Action.Template.Version = "9"
