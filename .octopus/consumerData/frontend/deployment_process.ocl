@@ -1,32 +1,21 @@
-step "deploy-java-archive" {
-    name = "Deploy Java Archive"
+step "mysql-create-database-if-not-exists" {
+    name = "MySQL - Create Database If Not Exists"
     properties = {
         Octopus.Action.TargetRoles = "customer-data-web"
     }
 
     action {
-        action_type = "Octopus.JavaArchive"
         properties = {
-            Octopus.Action.EnabledFeatures = ",Octopus.Features.SubstituteInFiles"
-            Octopus.Action.JavaArchive.DeployExploded = "False"
-            Octopus.Action.Package.CustomInstallationDirectoryShouldBePurgedBeforeDeployment = "False"
-            Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "octopus-server-built-in"
-            Octopus.Action.Package.JavaArchiveCompression = "True"
-            Octopus.Action.Package.PackageId = "petclinic.web"
-            Octopus.Action.Package.UseCustomInstallationDirectory = "False"
+            createDatabaseName = "#{MySQL.DatabaseName}"
+            createMySQLServerName = "#{MySQL.Host}"
+            createPort = "3306"
+            createUsername = "#{MySQL.Username}"
+            createUserPassword = "#{MySQL.Password}"
             Octopus.Action.RunOnServer = "false"
+            Octopus.Action.Template.Id = "ActionTemplates-842"
+            Octopus.Action.Template.Version = "9"
         }
         worker_pool_variable = ""
-
-        packages {
-            acquisition_location = "Server"
-            feed = "octopus-server-built-in"
-            package_id = "petclinic.web"
-            properties = {
-                SelectionMode = "immediate"
-            }
-        }
     }
 }
 
@@ -63,6 +52,38 @@ step "flyway-database-migrations" {
                 Extract = "True"
                 PackageParameterName = "Flyway.Package.Value"
                 SelectionMode = "deferred"
+            }
+        }
+    }
+}
+
+step "deploy-java-archive" {
+    name = "Deploy Java Archive"
+    properties = {
+        Octopus.Action.TargetRoles = "customer-data-web"
+    }
+
+    action {
+        action_type = "Octopus.JavaArchive"
+        properties = {
+            Octopus.Action.EnabledFeatures = ",Octopus.Features.SubstituteInFiles"
+            Octopus.Action.JavaArchive.DeployExploded = "False"
+            Octopus.Action.Package.CustomInstallationDirectoryShouldBePurgedBeforeDeployment = "False"
+            Octopus.Action.Package.DownloadOnTentacle = "False"
+            Octopus.Action.Package.FeedId = "octopus-server-built-in"
+            Octopus.Action.Package.JavaArchiveCompression = "True"
+            Octopus.Action.Package.PackageId = "petclinic.web"
+            Octopus.Action.Package.UseCustomInstallationDirectory = "False"
+            Octopus.Action.RunOnServer = "false"
+        }
+        worker_pool_variable = ""
+
+        packages {
+            acquisition_location = "Server"
+            feed = "octopus-server-built-in"
+            package_id = "petclinic.web"
+            properties = {
+                SelectionMode = "immediate"
             }
         }
     }
