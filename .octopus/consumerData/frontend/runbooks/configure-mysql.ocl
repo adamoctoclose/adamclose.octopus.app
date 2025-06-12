@@ -14,4 +14,67 @@ run_retention_policy {
     quantity_to_keep = 100
 }
 
-process {}
+process {
+    step "install-mysql" {
+        name = "Install MySQL"
+        properties = {
+            Octopus.Action.TargetRoles = "customer-data-web"
+        }
+
+        action {
+            action_type = "Octopus.Script"
+            properties = {
+                Octopus.Action.RunOnServer = "false"
+                Octopus.Action.Script.ScriptBody = <<-EOT
+                    #!/bin/bash
+                    
+                    set -e
+                    
+                    # === Configurable Values ===
+                    MYSQL_ROOT_PASSWORD="MySecureRootPass123!"
+                    DB_NAME="flywaydb"
+                    DB_USER="flywayuser"
+                    DB_PASS="FlywayPass123!"
+                    
+                    echo "🔧 Installing MySQL Server..."
+                    
+                    # Install MySQL Server
+                    sudo apt update
+                    sudo DEBIAN_FRONTEND=noninteractive apt install -y mysql-server
+                    
+                    echo "✅ MySQL installed."
+                    
+                    # Secure MySQL installation (minimal version)
+                    sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}'; FLUSH PRIVILEGES;"
+                    
+                    # Create a database and user
+                    echo "📦 Creating database '${DB_NAME}' and user '${DB_USER}'..."
+                    
+                    sudo mysql -u root -p"${MYSQL_ROOT_PASSWORD}" <<EOF
+                    CREATE DATABASE IF NOT EXISTS ${DB_NAME};
+                    CREATE USER IF NOT EXISTS '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';
+                    GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'localhost';
+                    FLUSH PRIVILEGES;
+                    EOF
+                    
+                    # Optional: Show databases and users for verification (comment out if not needed)
+                    # sudo mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "SHOW DATABASES; SELECT user, host FROM mysql.user;"
+                    
+                    echo "✅ MySQL setup complete."
+                    echo "-----------------------------------------"
+                    echo "🧩 Use the following credentials for Flyway:"
+                    echo "Database: ${DB_NAME}"
+                    echo "Username: ${DB_USER}"
+                    echo "Password: ${DB_PASS}"
+                    echo "Connection: jdbc:mysql://localhost:3306/${DB_NAME}"
+                    echo "-----------------------------------------"
+                    
+                    EOT
+                Octopus.Action.Script.ScriptSource = "Inline"
+                Octopus.Action.Script.Syntax = "PowerShell"
+                OctopusUseBundledTooling = "False"
+            }
+            worker_pool_variable = ""
+        }
+    }
+}
