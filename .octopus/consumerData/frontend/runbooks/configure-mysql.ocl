@@ -1,0 +1,17 @@
+name = "Configure MySQL"
+default_guided_failure_mode = "EnvironmentDefault"
+description = <<-EOT
+        Action: Installs and Configures MySQL
+        
+        Effects: MySQL database
+        EOT
+
+connectivity_policy {
+    allow_deployments_to_no_targets = true
+}
+
+run_retention_policy {
+    quantity_to_keep = 100
+}
+
+process {}
