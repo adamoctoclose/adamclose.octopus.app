@@ -1,0 +1,21 @@
+variable "Project.Application.Directory" {
+    value "/var/cdf/#{octopus.Environment.Name}" {}
+}
+
+variable "Project.Application.port" {
+    value "80" {
+        environment = ["production"]
+    }
+
+    value "81" {
+        environment = ["staging"]
+    }
+
+    value "82" {
+        environment = ["test"]
+    }
+
+    value "83" {
+        environment = ["development"]
+    }
+}
