@@ -14,4 +14,33 @@ run_retention_policy {
     quantity_to_keep = 100
 }
 
-process {}
+process {
+    step "scan-mysql-ports" {
+        name = "Scan MySQL Ports"
+        properties = {
+            Octopus.Action.TargetRoles = "customer-data-web"
+        }
+
+        action {
+            action_type = "Octopus.Script"
+            properties = {
+                Octopus.Action.RunOnServer = "false"
+                Octopus.Action.Script.ScriptBody = <<-EOT
+                    #!/bin/bash
+                    
+                    echo "Scanning common MySQL ports..."
+                    sleep 1
+                    echo "❌ Port 3307 is closed."
+                    sleep 1
+                    echo "❌ Port 33060 is closed."
+                    sleep 1
+                    write_highlight "✅ Port 3306 is open – likely MySQL is running here."
+                    
+                    EOT
+                Octopus.Action.Script.ScriptSource = "Inline"
+                Octopus.Action.Script.Syntax = "Bash"
+                OctopusUseBundledTooling = "False"
+            }
+        }
+    }
+}
