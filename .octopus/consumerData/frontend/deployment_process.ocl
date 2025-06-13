@@ -52,7 +52,7 @@ step "mysql-create-database-if-not-exists" {
         properties = {
             createDatabaseName = "#{MySQL.DatabaseName}"
             createMySQLServerName = "#{MySQL.Host}"
-            createPort = "3306"
+            createPort = "#{MySQL.Port}"
             createUsername = "#{MySQL.Username}"
             createUserPassword = "#{MySQL.Password}"
             createUseSSL = "True"
