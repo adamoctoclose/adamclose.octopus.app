@@ -1,4 +1,4 @@
-name = "🛠️ Configure Java"
+name = "🛠️ Configure Java Runtime"
 default_guided_failure_mode = "EnvironmentDefault"
 description = <<-EOT
         Action: Installs and sets up Java on Linux tentacles 
