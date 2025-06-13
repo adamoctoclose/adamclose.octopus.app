@@ -1,3 +1,45 @@
+step "production-approval-intervention" {
+    name = "Production Approval Intervention "
+
+    action {
+        action_type = "Octopus.Manual"
+        properties = {
+            Octopus.Action.Manual.BlockConcurrentDeployments = "False"
+            Octopus.Action.Manual.Instructions = "Please approve this deployment to production"
+            Octopus.Action.Manual.ResponsibleTeamIds = "global/everyone"
+        }
+    }
+}
+
+step "send-deployment-notification" {
+    name = "Send Deployment Notification "
+
+    action {
+        environments = ["production"]
+        properties = {
+            Octopus.Action.Template.Id = "ActionTemplates-781"
+            Octopus.Action.Template.Version = "0"
+        }
+        worker_pool = "hosted-ubuntu"
+    }
+}
+
+step "hashicorp-vault-key-value-retrieve-secrets" {
+    name = "HashiCorp Vault - Key Value Retrieve Secrets"
+
+    action {
+        properties = {
+            Octopus.Action.Template.Id = "ActionTemplates-762"
+            Octopus.Action.Template.Version = "1"
+            Vault.Retrieve.KV.V2.Secrets.ApiVersion = "v1"
+            Vault.Retrieve.KV.V2.Secrets.PrintVariableNames = "False"
+            Vault.Retrieve.KV.V2.Secrets.RecursiveSearch = "False"
+            Vault.Retrieve.KV.V2.Secrets.RetrievalMethod = "Get"
+        }
+        worker_pool = "hosted-ubuntu"
+    }
+}
+
 step "mysql-create-database-if-not-exists" {
     name = "MySQL - Create Database If Not Exists"
     properties = {
@@ -88,5 +130,30 @@ step "deploy-java-archive" {
                 SelectionMode = "immediate"
             }
         }
+    }
+}
+
+step "send-failed-deployment-notification" {
+    condition = "Failure"
+    name = "Send Failed Deployment Notification"
+
+    action {
+        properties = {
+            Octopus.Action.Template.Id = "ActionTemplates-781"
+            Octopus.Action.Template.Version = "0"
+        }
+        worker_pool = "hosted-ubuntu"
+    }
+}
+
+step "send-successful-deployment-notification" {
+    name = "Send Successful Deployment Notification"
+
+    action {
+        properties = {
+            Octopus.Action.Template.Id = "ActionTemplates-781"
+            Octopus.Action.Template.Version = "0"
+        }
+        worker_pool = "hosted-ubuntu"
     }
 }
