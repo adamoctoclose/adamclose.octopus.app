@@ -106,11 +106,25 @@ step "flyway-database-migrations" {
 step "deploy-java-archive" {
     name = "Deploy Java Archive"
     properties = {
+        Octopus.Action.MaxParallelism = "1"
         Octopus.Action.TargetRoles = "customer-data-web"
     }
 
-    action {
+    action "remove-from-load-balancer" {
+        action_type = "Octopus.Script"
+        name = "Remove from Load Balancer"
+        properties = {
+            Octopus.Action.Script.ScriptBody = "write-host \"Remove From Load Balancer\""
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool = "hosted-ubuntu"
+    }
+
+    action "deploy-java-archive" {
         action_type = "Octopus.JavaArchive"
+        name = "Deploy Java Archive"
         properties = {
             Octopus.Action.EnabledFeatures = ",Octopus.Features.SubstituteInFiles"
             Octopus.Action.JavaArchive.DeployExploded = "False"
@@ -132,6 +146,30 @@ step "deploy-java-archive" {
                 SelectionMode = "immediate"
             }
         }
+    }
+
+    action "run-smoke-tests" {
+        action_type = "Octopus.Script"
+        name = "Run Smoke Tests"
+        properties = {
+            Octopus.Action.Script.ScriptBody = "write-host \"Run smoke tests\""
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool = "hosted-ubuntu"
+    }
+
+    action "add-to-load-balancer" {
+        action_type = "Octopus.Script"
+        name = "Add to Load Balancer"
+        properties = {
+            Octopus.Action.Script.ScriptBody = "write-host \"Addd to Load Balancer\""
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool = "hosted-ubuntu"
     }
 }
 
