@@ -1,0 +1,17 @@
+name = "🛠️ Scan MySQL Ports"
+default_guided_failure_mode = "EnvironmentDefault"
+description = <<-EOT
+        Action: Scans for open MySQL port application should be using 
+        
+        Effects: MySQL, Frontend
+        EOT
+
+connectivity_policy {
+    allow_deployments_to_no_targets = true
+}
+
+run_retention_policy {
+    quantity_to_keep = 100
+}
+
+process {}
