@@ -1,0 +1,17 @@
+name = "🗒️ Dump JVM Heap"
+default_guided_failure_mode = "EnvironmentDefault"
+description = <<-EOT
+        Action: inspects running JVMs
+        
+        Effects: Running JVMS on Java Machine
+        EOT
+
+connectivity_policy {
+    allow_deployments_to_no_targets = true
+}
+
+run_retention_policy {
+    quantity_to_keep = 100
+}
+
+process {}
