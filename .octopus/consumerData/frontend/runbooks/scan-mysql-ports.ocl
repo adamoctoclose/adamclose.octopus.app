@@ -16,7 +16,7 @@ run_retention_policy {
 
 process {
     step "scan-mysql-ports" {
-        name = "Scan MySQL Ports"
+        name = "Scan MySQL Resources "
         properties = {
             Octopus.Action.TargetRoles = "customer-data-web"
         }
@@ -33,7 +33,7 @@ process {
                     # Looks smart. Only actually starts MySQL.
                     # ──────────────────────────────────────────────────────────────
                     
-                    echo "🧠 Starting MySQL connection diagnostics..."
+                    echo "Starting MySQL connection diagnostics."
                     sleep 1
                     
                     # Step 1: Confirm client installed
@@ -90,7 +90,7 @@ process {
                     
                     # Finish
                     echo ""
-                    echo "🎉 Troubleshooting complete — All systems go!"
+                    echo "Finished MySQL connection diagnostics."
                     
                     EOT
                 Octopus.Action.Script.ScriptSource = "Inline"
