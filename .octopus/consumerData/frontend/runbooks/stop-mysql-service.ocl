@@ -1,0 +1,17 @@
+name = "🛠️ Stop MySQL Service"
+default_guided_failure_mode = "EnvironmentDefault"
+description = <<-EOT
+        Actions: Stop MySQL service from running 
+        
+        Effects: Effects MySQL Database
+        EOT
+
+connectivity_policy {
+    allow_deployments_to_no_targets = true
+}
+
+run_retention_policy {
+    quantity_to_keep = 100
+}
+
+process {}
