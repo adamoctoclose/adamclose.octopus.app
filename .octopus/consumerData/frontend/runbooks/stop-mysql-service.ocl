@@ -14,4 +14,48 @@ run_retention_policy {
     quantity_to_keep = 100
 }
 
-process {}
+process {
+    step "stop-mysql-service" {
+        name = "Stop MySQL Service"
+        properties = {
+            Octopus.Action.TargetRoles = "customer-data-web"
+        }
+
+        action {
+            action_type = "Octopus.Script"
+            properties = {
+                Octopus.Action.RunOnServer = "false"
+                Octopus.Action.Script.ScriptBody = <<-EOT
+                    #!/bin/bash
+                    
+                    # Check if the user has sudo privileges
+                    if [[ $EUID -ne 0 ]]; then
+                       echo "This script must be run as root or with sudo"
+                       exit 1
+                    fi
+                    
+                    # Try to stop the MySQL service
+                    echo "Stopping MySQL service..."
+                    if systemctl stop mysql; then
+                        echo "MySQL service stopped successfully."
+                    else
+                        echo "Failed to stop MySQL service. Trying alternative service name..."
+                    
+                        # Try alternative service name used on some systems
+                        if systemctl stop mysqld; then
+                            echo "mysqld service stopped successfully."
+                        else
+                            echo "Failed to stop mysqld service as well. Please check service name and permissions."
+                            exit 1
+                        fi
+                    fi
+                    
+                    EOT
+                Octopus.Action.Script.ScriptSource = "Inline"
+                Octopus.Action.Script.Syntax = "Bash"
+                OctopusUseBundledTooling = "False"
+            }
+            worker_pool_variable = ""
+        }
+    }
+}
