@@ -1,4 +1,4 @@
-name = "🛠️ Scan MySQL Ports"
+name = "🛠️ Troubleshoot MySQL Service"
 default_guided_failure_mode = "EnvironmentDefault"
 description = <<-EOT
         Action: Scans for open MySQL port application should be using 
