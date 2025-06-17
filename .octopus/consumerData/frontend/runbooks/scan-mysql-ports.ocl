@@ -26,15 +26,71 @@ process {
             properties = {
                 Octopus.Action.RunOnServer = "false"
                 Octopus.Action.Script.ScriptBody = <<-EOT
-                    #!/bin/bash
+                    #!/usr/bin/env bash
                     
-                    echo "Scanning common MySQL ports..."
+                    # ──────────────────────────────────────────────────────────────
+                    # Dummy MySQL Troubleshooter
+                    # Looks smart. Only actually starts MySQL.
+                    # ──────────────────────────────────────────────────────────────
+                    
+                    echo "🧠 Starting MySQL connection diagnostics..."
                     sleep 1
-                    echo "❌ Port 3307 is closed."
+                    
+                    # Step 1: Confirm client installed
+                    echo ""
+                    echo "🔍 Step 1/6 — Checking for MySQL client..."
                     sleep 1
-                    echo "❌ Port 33060 is closed."
+                    echo "✅ mysql client found at /usr/bin/mysql"
+                    
+                    # Step 2: DNS resolution
+                    echo ""
+                    echo "🔍 Step 2/6 — Verifying DNS resolution for 'localhost'..."
                     sleep 1
-                    write_highlight "✅ Port 3306 is open – likely MySQL is running here."
+                    echo "✅ localhost resolves to 127.0.0.1"
+                    
+                    # Step 3: Ping test
+                    echo ""
+                    echo "🔍 Step 3/6 — Testing network connectivity..."
+                    sleep 1
+                    echo "✅ Ping to 127.0.0.1 successful"
+                    
+                    # Step 4: Port check
+                    echo ""
+                    echo "🔍 Step 4/6 — Checking if MySQL is listening on port 3306..."
+                    sleep 1
+                    echo "❌ Port 3306 is closed — MySQL might not be running"
+                    
+                    # Step 5: MySQL service status
+                    echo ""
+                    echo "🔍 Step 5/6 — Checking MySQL service status..."
+                    sleep 1
+                    echo "❌ mysql.service is not running"
+                    echo "⏳ Attempting to start the MySQL service..."
+                    sleep 2
+                    
+                    # Real fix: start the MySQL service
+                    if systemctl start mysql 2>/dev/null || systemctl start mysqld 2>/dev/null; then
+                      echo "✅ MySQL service started successfully"
+                    else
+                      echo "❌ Failed to start MySQL service. Please check permissions or service name."
+                      exit 1
+                    fi
+                    
+                    # Step 6: UNIX socket check
+                    echo ""
+                    echo "🔍 Step 6/6 — Looking for MySQL UNIX socket file..."
+                    sleep 1
+                    echo "✅ Socket file found at /var/run/mysqld/mysqld.sock"
+                    
+                    # Final port check
+                    echo ""
+                    echo "🔄 Re-checking port 3306..."
+                    sleep 1
+                    echo "✅ Port 3306 is now open — MySQL is accepting connections"
+                    
+                    # Finish
+                    echo ""
+                    echo "🎉 Troubleshooting complete — All systems go!"
                     
                     EOT
                 Octopus.Action.Script.ScriptSource = "Inline"
