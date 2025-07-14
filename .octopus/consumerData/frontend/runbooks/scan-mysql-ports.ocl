@@ -6,7 +6,7 @@ description = <<-EOT
         Effects: MySQL, Frontend
         EOT
 environment_scope = "Specified"
-environments = ["development"]
+environments = ["production"]
 
 connectivity_policy {
     allow_deployments_to_no_targets = true
