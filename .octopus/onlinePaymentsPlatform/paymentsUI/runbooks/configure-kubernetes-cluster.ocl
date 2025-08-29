@@ -10,4 +10,22 @@ run_retention_policy {
     quantity_to_keep = 100
 }
 
-process {}
+process {
+    process_template "create-artifactory-secret" {
+        name = "Create Artifactory Secret"
+        process_template_slug = "create-kubernetes-secret"
+        version_mask = "1.X"
+
+        parameter "Parameter.Target.Tag" {
+            value = "local-kubernetes-cluster"
+        }
+
+        parameter "Parameter.Secret.Username" {
+            value = "#{CyberArk.Password}"
+        }
+
+        parameter "Parameter.Secret.Password" {
+            value = "#{CyberArk.Password}"
+        }
+    }
+}
