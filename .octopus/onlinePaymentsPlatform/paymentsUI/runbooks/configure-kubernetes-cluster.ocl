@@ -21,11 +21,11 @@ process {
         }
 
         parameter "Parameter.Secret.Username" {
-            value = "#{CyberArk.Password}"
+            value = "#{Artifactory.Username}"
         }
 
         parameter "Parameter.Secret.Password" {
-            value = "#{CyberArk.Password}"
+            value = "#{Artifactory.Password}"
         }
     }
 }
